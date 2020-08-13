@@ -28,14 +28,14 @@ function SearchMovies() {
     <Container>
       <InputBlock>
         <IoMdSearch size={19} />
-        <input type="text" />
+        <input type="text" placeholder="Buscar por um Filme, Série ou Pessoa" />
       </InputBlock>
 
       <Main>
         <SearchSection>
           <SearchResult>
             <Title>
-              <p>Resultados da Busca</p>
+              <p>Resultado da Busca</p>
             </Title>
             {searchResults.map((searchItem) => {
               return (

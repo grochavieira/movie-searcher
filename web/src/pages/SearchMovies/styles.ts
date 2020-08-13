@@ -12,19 +12,22 @@ export const Container = styled.div`
 `;
 
 export const InputBlock = styled.div`
-  width: 90%;
+  width: 100%;
   margin: 10px 0px 30px 0px;
   border: 0;
   border-top: solid 2px rgb(48, 64, 81);
   border-bottom: solid 2px #eee;
-  height: 40px;
+  height: 50px;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   input {
     border: 0;
-    width: 100%;
+    width: 90%;
     margin-left: 5px;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
   }
 `;
 
@@ -50,13 +53,14 @@ export const Title = styled.div`
   width: 100%;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  background: rgb(65, 180, 225);
+  background: #01b4e4;
   margin-bottom: 8px;
 
   p {
     margin-left: 20px;
     color: #fff;
-    font-size: 18px;
+    font-size: 1.1rem;
+    font-weight: bold;
     padding: 3px 0px;
   }
 `;
@@ -66,7 +70,7 @@ export const SearchItem = styled.div<SearchItemProps>`
   align-items: center;
   justify-content: space-between;
   padding: 0px 20px;
-  font-size: 16px;
+  font-size: 1rem;
   background: ${(props) => (props.isSelected ? "rgb(235, 235, 235)" : "#fff")};
 
   p {
@@ -80,14 +84,17 @@ export const SearchItem = styled.div<SearchItemProps>`
       props.isSelected ? "#fff" : "rgb(234, 234, 234)"};
     padding: 5px 15px;
     border-radius: 10px;
+    font-family: "Roboto Mono", monospace;
+    font-size: 1rem;
   }
 `;
 
 export const Information = styled.div`
   margin-top: 10px;
+  font-size: 1rem;
 
   p {
-    color: rgb(152, 152, 152);
+    color: rgb(102, 102, 102);
   }
   span {
     margin-right: 5px;
