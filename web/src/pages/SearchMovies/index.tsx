@@ -13,6 +13,8 @@ import {
 import { IoMdSearch } from "react-icons/io";
 import { BsInfoCircleFill } from "react-icons/bs";
 
+import MovieItem, { Movie } from "../../components/MovieItem";
+
 function SearchMovies() {
   const searchResults = [
     "Filmes",
@@ -24,6 +26,56 @@ function SearchMovies() {
     "Emissoras",
   ];
 
+  const movies = [
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+    {
+      title: "Os Vingadores: The Avengers",
+      release_date: "25 de abril de 2012",
+      description:
+        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
+      image:
+        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
+    },
+  ];
   return (
     <Container>
       <InputBlock>
@@ -55,7 +107,11 @@ function SearchMovies() {
             </p>
           </Information>
         </SearchSection>
-        <MoviesList></MoviesList>
+        <MoviesList>
+          {movies.map((movie: Movie) => {
+            return <MovieItem key={movie.title} movie={movie} />;
+          })}
+        </MoviesList>
       </Main>
     </Container>
   );

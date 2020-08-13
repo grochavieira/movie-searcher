@@ -17,7 +17,7 @@ export const InputBlock = styled.div`
   border: 0;
   border-top: solid 2px rgb(48, 64, 81);
   border-bottom: solid 2px #eee;
-  height: 50px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,12 +28,22 @@ export const InputBlock = styled.div`
     margin-left: 5px;
     font-size: 1rem;
     font-family: Arial, sans-serif;
+    color: rgb(172, 172, 172);
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  *::placeholder {
+    color: rgb(172, 172, 172);
   }
 `;
 
 export const Main = styled.main`
   display: flex;
   width: 90%;
+  align-items: flex-start;
 `;
 
 export const SearchSection = styled.div`
