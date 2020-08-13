@@ -51,6 +51,7 @@ export const SearchSection = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 30%;
+  min-width: 270px;
 `;
 
 export const SearchResult = styled.section`

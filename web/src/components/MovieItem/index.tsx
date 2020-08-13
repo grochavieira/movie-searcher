@@ -2,18 +2,20 @@ import React from "react";
 
 import {
   Container,
-  ImageSection,
+  Poster,
   TextSection,
   Title,
   Data,
-  Description,
+  Overview,
 } from "./styles";
 
 export interface Movie {
+  id: number;
   title: string;
   release_date: string;
-  image: string;
-  description: string;
+  poster_url: string;
+  poster_path: string;
+  overview: string;
 }
 
 interface MovieProps {
@@ -23,13 +25,13 @@ interface MovieProps {
 const MovieItem: React.FC<MovieProps> = ({ movie }) => {
   return (
     <Container>
-      <ImageSection>
-        <img src={movie.image} alt="" />
-      </ImageSection>
+      <Poster poster_url={movie.poster_url}></Poster>
       <TextSection>
         <Title>{movie.title}</Title>
         <Data>{movie.release_date}</Data>
-        <Description>{movie.description}</Description>
+        <Overview>
+          <p>{movie.overview}</p>
+        </Overview>
       </TextSection>
     </Container>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   InputBlock,
@@ -12,6 +12,7 @@ import {
 } from "./styles";
 import { IoMdSearch } from "react-icons/io";
 import { BsInfoCircleFill } from "react-icons/bs";
+import axios from "axios";
 
 import MovieItem, { Movie } from "../../components/MovieItem";
 
@@ -26,61 +27,42 @@ function SearchMovies() {
     "Emissoras",
   ];
 
-  const movies = [
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-    {
-      title: "Os Vingadores: The Avengers",
-      release_date: "25 de abril de 2012",
-      description:
-        "Loki, o irmão de Thor, ganha acesso ao poder ilimitado do cubo cósmico ao roubá-lo de dentro das instalações da S.H.I.E.L.D. Nick Fury, o diretor desta agência internacional que mantém a paz ",
-      image:
-        "https://image.tmdb.org/t/p/w94_and_h141_bestv2/u49fzmIJHkb1H4oGFTXtBGgaUS1.jpg",
-    },
-  ];
+  const [search, setSearch] = useState("");
+  const [movies, setMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    async function searchItem() {
+      const apiKey = "e2e6c0526e3737f2381684d2fd63d354";
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&api_key=${apiKey}`
+      );
+
+      const { results } = data;
+
+      const moviesArray: Movie[] = [];
+      results.map((movie: Movie) => {
+        movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
+        moviesArray.push(movie);
+      });
+
+      setMovies(moviesArray);
+
+      console.log(data);
+    }
+    setMovies([]);
+    searchItem();
+  }, [search]);
+
   return (
     <Container>
       <InputBlock>
         <IoMdSearch size={19} />
-        <input type="text" placeholder="Buscar por um Filme, Série ou Pessoa" />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          type="text"
+          placeholder="Buscar por um Filme, Série ou Pessoa"
+        />
       </InputBlock>
 
       <Main>
@@ -109,7 +91,7 @@ function SearchMovies() {
         </SearchSection>
         <MoviesList>
           {movies.map((movie: Movie) => {
-            return <MovieItem key={movie.title} movie={movie} />;
+            return <MovieItem key={movie.id} movie={movie} />;
           })}
         </MoviesList>
       </Main>
