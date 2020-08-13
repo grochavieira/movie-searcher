@@ -57,6 +57,7 @@ export const SearchSection = styled.div`
 export const SearchResult = styled.section`
   border: 1px solid #eee;
   border-radius: 10px;
+  padding-bottom: 8px;
 `;
 
 export const Title = styled.div`
@@ -83,6 +84,7 @@ export const SearchItem = styled.div<SearchItemProps>`
   padding: 0px 20px;
   font-size: 1rem;
   background: ${(props) => (props.isSelected ? "rgb(235, 235, 235)" : "#fff")};
+  cursor: pointer;
 
   p {
     color: rgb(54, 54, 54);
@@ -97,6 +99,14 @@ export const SearchItem = styled.div<SearchItemProps>`
     border-radius: 10px;
     font-family: "Roboto Mono", monospace;
     font-size: 1rem;
+  }
+
+  &:hover span {
+    background-color: #fff;
+  }
+
+  &:hover {
+    background-color: rgb(235, 235, 235);
   }
 `;
 

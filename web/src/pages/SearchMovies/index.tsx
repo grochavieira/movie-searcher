@@ -16,16 +16,22 @@ import axios from "axios";
 
 import MovieItem, { Movie } from "../../components/MovieItem";
 
+interface SearchItem {
+  type: string;
+  label: string;
+  isSelected: boolean;
+  value: number;
+}
+
 function SearchMovies() {
-  const searchResults = [
-    "Filmes",
-    "Séries",
-    "Pessoas",
-    "Coletâneas",
-    "Palavras-chave",
-    "Produtoras",
-    "Emissoras",
-  ];
+  const [searchResults, setSearchResults] = useState([
+    { type: "multi", label: "Tudo", isSelected: false, value: 0 },
+    { type: "movie", label: "Filmes", isSelected: true, value: 0 },
+    { type: "tv", label: "Séries", isSelected: false, value: 0 },
+    { type: "person", label: "Pessoas", isSelected: false, value: 0 },
+  ]);
+
+  const [searchType, setSearchType] = useState("movie");
 
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -33,25 +39,43 @@ function SearchMovies() {
   useEffect(() => {
     async function searchItem() {
       const apiKey = "e2e6c0526e3737f2381684d2fd63d354";
-      const { data } = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&api_key=${apiKey}`
-      );
+      try {
+        const { data } = await axios.get(
+          `https://api.themoviedb.org/3/search/${searchType}?query=${search}&language=pt-BR&api_key=${apiKey}`
+        );
 
-      const { results } = data;
+        const { results } = data;
 
-      const moviesArray: Movie[] = [];
-      results.map((movie: Movie) => {
-        movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
-        moviesArray.push(movie);
-      });
+        const moviesArray: Movie[] = [];
+        results.map((movie: Movie) => {
+          movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
+          moviesArray.push(movie);
+        });
 
-      setMovies(moviesArray);
+        setMovies(moviesArray);
 
-      console.log(data);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
     }
     setMovies([]);
     searchItem();
-  }, [search]);
+  }, [search, searchType]);
+
+  function handleSearchType(searchItem: SearchItem) {
+    const newSearchType = searchItem.type;
+    const newSearchResults = searchResults.map((item) => {
+      if (searchItem.type === item.type) {
+        item.isSelected = true;
+      } else item.isSelected = false;
+
+      return item;
+    });
+
+    setSearchResults(newSearchResults);
+    setSearchType(newSearchType);
+  }
 
   return (
     <Container>
@@ -73,8 +97,12 @@ function SearchMovies() {
             </Title>
             {searchResults.map((searchItem) => {
               return (
-                <SearchItem isSelected={false} key={searchItem}>
-                  <p>{searchItem}</p> <span>0</span>
+                <SearchItem
+                  onClick={() => handleSearchType(searchItem)}
+                  isSelected={searchItem.isSelected}
+                  key={searchItem.type}
+                >
+                  <p>{searchItem.label}</p> <span>{searchItem.value}</span>
                 </SearchItem>
               );
             })}
