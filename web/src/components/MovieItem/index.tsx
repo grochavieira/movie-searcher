@@ -7,7 +7,7 @@ import {
   Title,
   Data,
   Overview,
-} from "./styles";
+} from "../styles/styles";
 
 export interface Movie {
   id: number;

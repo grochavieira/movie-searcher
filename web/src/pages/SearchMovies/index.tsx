@@ -15,6 +15,8 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import axios from "axios";
 
 import MovieItem, { Movie } from "../../components/MovieItem";
+import TvItem, { Tv } from "../../components/TvItem";
+import PersonItem, { Person } from "../../components/PersonItem";
 
 interface SearchItem {
   type: string;
@@ -35,6 +37,8 @@ function SearchMovies() {
 
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [tvs, setTvs] = useState<Tv[]>([]);
+  const [persons, setPersons] = useState<Person[]>([]);
 
   useEffect(() => {
     async function searchItem() {
@@ -45,14 +49,39 @@ function SearchMovies() {
         );
 
         const { results } = data;
-
         const moviesArray: Movie[] = [];
-        results.map((movie: Movie) => {
-          movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
-          moviesArray.push(movie);
-        });
+        const tvsArray: Tv[] = [];
+        const personsArray: Person[] = [];
+
+        if (searchType === "movie") {
+          results.map((movie: Movie) => {
+            movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
+            moviesArray.push(movie);
+          });
+        } else if (searchType === "tv") {
+          results.map((tv: Tv) => {
+            tv.poster_url = `https://image.tmdb.org/t/p/w92${tv.poster_path}`;
+            tvsArray.push(tv);
+          });
+        } else if (searchType === "person") {
+          results.map((person: Person) => {
+            const movies_worked_on = person.known_for.map((data) => {
+              if (data.title) {
+                return data.title;
+              } else {
+                return data.original_name;
+              }
+            });
+            person.movies_worked_on = movies_worked_on.join(", ");
+            person.profile_url = `https://image.tmdb.org/t/p/w90_and_h90_face${person.profile_path}`;
+
+            personsArray.push(person);
+          });
+        }
 
         setMovies(moviesArray);
+        setTvs(tvsArray);
+        setPersons(personsArray);
 
         console.log(data);
       } catch (error) {
@@ -60,6 +89,8 @@ function SearchMovies() {
       }
     }
     setMovies([]);
+    setTvs([]);
+    setPersons([]);
     searchItem();
   }, [search, searchType]);
 
@@ -120,6 +151,12 @@ function SearchMovies() {
         <MoviesList>
           {movies.map((movie: Movie) => {
             return <MovieItem key={movie.id} movie={movie} />;
+          })}
+          {tvs.map((tv: Tv) => {
+            return <TvItem key={tv.id} tv={tv} />;
+          })}
+          {persons.map((person: Person) => {
+            return <PersonItem key={person.id} person={person} />;
           })}
         </MoviesList>
       </Main>
