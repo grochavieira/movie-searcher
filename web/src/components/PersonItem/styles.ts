@@ -14,7 +14,7 @@ export const Container = styled.div`
 export const Profile = styled.section<ProfileProps>`
   margin-right: 15px;
   border-radius: 12px;
-  width: 90px;
+  min-width: 90px;
   background-color: #aaa;
   content: ${(props) => `url(${props.profile_url})`};
   background-repeat: no-repeat;

@@ -34,65 +34,132 @@ function SearchMovies() {
   ]);
 
   const [searchType, setSearchType] = useState("movie");
+  const [totalResults, setTotalResults] = useState<any>({
+    multi: 0,
+    movie: 0,
+    tv: 0,
+    person: 0,
+  });
 
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [tvs, setTvs] = useState<Tv[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
 
+  const apiKey = "e2e6c0526e3737f2381684d2fd63d354";
+
   useEffect(() => {
     async function searchItem() {
-      const apiKey = "e2e6c0526e3737f2381684d2fd63d354";
-      try {
-        const { data } = await axios.get(
-          `https://api.themoviedb.org/3/search/${searchType}?query=${search}&language=pt-BR&api_key=${apiKey}`
-        );
-
-        const { results } = data;
-        const moviesArray: Movie[] = [];
-        const tvsArray: Tv[] = [];
-        const personsArray: Person[] = [];
-
-        if (searchType === "movie") {
-          results.map((movie: Movie) => {
-            movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
-            moviesArray.push(movie);
-          });
-        } else if (searchType === "tv") {
-          results.map((tv: Tv) => {
-            tv.poster_url = `https://image.tmdb.org/t/p/w92${tv.poster_path}`;
-            tvsArray.push(tv);
-          });
-        } else if (searchType === "person") {
-          results.map((person: Person) => {
-            const movies_worked_on = person.known_for.map((data) => {
-              if (data.title) {
-                return data.title;
-              } else {
-                return data.original_name;
-              }
-            });
-            person.movies_worked_on = movies_worked_on.join(", ");
-            person.profile_url = `https://image.tmdb.org/t/p/w90_and_h90_face${person.profile_path}`;
-
-            personsArray.push(person);
-          });
-        }
-
-        setMovies(moviesArray);
-        setTvs(tvsArray);
-        setPersons(personsArray);
-
-        console.log(data);
-      } catch (error) {
-        console.log(error);
+      if (searchType === "movie" || searchType === "multi") {
+        await searchMovieItems();
       }
+      if (searchType === "tv" || searchType === "multi") {
+        await searchTvItems();
+      }
+      if (searchType === "person" || searchType === "multi") {
+        await searchPersonItems();
+      }
+      const onlyTotalResults = true;
+
+      let totalMovies = (await searchMovieItems(onlyTotalResults)) || 0;
+      let totalTvs = (await searchTvItems(onlyTotalResults)) || 0;
+      let totalPersons = (await searchPersonItems(onlyTotalResults)) || 0;
+
+      console.log("Total movies: ", totalMovies);
+
+      setTotalResults({
+        multi: totalMovies + totalTvs + totalPersons,
+        movie: totalMovies,
+        tv: totalTvs,
+        person: totalPersons,
+      });
     }
     setMovies([]);
     setTvs([]);
     setPersons([]);
     searchItem();
   }, [search, searchType]);
+
+  async function searchMovieItems(onlyTotalResults = false) {
+    try {
+      let { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&api_key=${apiKey}`
+      );
+
+      if (onlyTotalResults) {
+        return data.total_results;
+      }
+
+      const { results } = data;
+
+      const moviesArray: Movie[] = [];
+
+      results.map((movie: Movie) => {
+        movie.poster_url = `https://image.tmdb.org/t/p/w92${movie.poster_path}`;
+        moviesArray.push(movie);
+      });
+      setMovies(moviesArray);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function searchTvItems(onlyTotalResults = false) {
+    try {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/tv?query=${search}&language=pt-BR&api_key=${apiKey}`
+      );
+
+      if (onlyTotalResults) {
+        return data.total_results;
+      }
+
+      const { results } = data;
+
+      const tvsArray: Tv[] = [];
+
+      results.map((tv: Tv) => {
+        tv.poster_url = `https://image.tmdb.org/t/p/w92${tv.poster_path}`;
+        tvsArray.push(tv);
+      });
+      setTvs(tvsArray);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function searchPersonItems(onlyTotalResults = false) {
+    try {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/person?query=${search}&language=pt-BR&api_key=${apiKey}`
+      );
+
+      if (onlyTotalResults) {
+        return data.total_results;
+      }
+
+      const { results } = data;
+
+      const personsArray: Person[] = [];
+
+      results.map((person: Person) => {
+        const movies_worked_on = person.known_for.map((data) => {
+          if (data.title) {
+            return data.title;
+          } else {
+            return data.original_name;
+          }
+        });
+        person.movies_worked_on = movies_worked_on.join(", ");
+        person.profile_url = `https://image.tmdb.org/t/p/w90_and_h90_face${person.profile_path}`;
+
+        personsArray.push(person);
+      });
+      setPersons(personsArray);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleSearchType(searchItem: SearchItem) {
     const newSearchType = searchItem.type;
@@ -133,7 +200,8 @@ function SearchMovies() {
                   isSelected={searchItem.isSelected}
                   key={searchItem.type}
                 >
-                  <p>{searchItem.label}</p> <span>{searchItem.value}</span>
+                  <p>{searchItem.label}</p>{" "}
+                  <span>{totalResults[`${searchItem.type}`]}</span>
                 </SearchItem>
               );
             })}
