@@ -25,10 +25,24 @@ interface SearchItem {
   value: number;
 }
 
+interface MultiItem {
+  id: number;
+  media_type: string;
+  title: string;
+  name: string;
+  release_date: string;
+  first_air_date: string;
+  poster_url: string;
+  poster_path: string;
+  overview: string;
+  known_for: string;
+  known_for_department: string;
+}
+
 function SearchMovies() {
   const [searchResults, setSearchResults] = useState([
-    { type: "multi", label: "Tudo", isSelected: false, value: 0 },
-    { type: "movie", label: "Filmes", isSelected: true, value: 0 },
+    { type: "multi", label: "Tudo", isSelected: true, value: 0 },
+    { type: "movie", label: "Filmes", isSelected: false, value: 0 },
     { type: "tv", label: "Séries", isSelected: false, value: 0 },
     { type: "person", label: "Pessoas", isSelected: false, value: 0 },
   ]);
@@ -50,25 +64,27 @@ function SearchMovies() {
 
   useEffect(() => {
     async function searchItem() {
-      if (searchType === "movie" || searchType === "multi") {
+      if (searchType === "movie") {
         await searchMovieItems();
-      }
-      if (searchType === "tv" || searchType === "multi") {
+      } else if (searchType === "tv") {
         await searchTvItems();
-      }
-      if (searchType === "person" || searchType === "multi") {
+      } else if (searchType === "person") {
         await searchPersonItems();
+      } else if (searchType === "multi") {
+        await searchAllItems();
       }
       const onlyTotalResults = true;
 
       let totalMovies = (await searchMovieItems(onlyTotalResults)) || 0;
       let totalTvs = (await searchTvItems(onlyTotalResults)) || 0;
       let totalPersons = (await searchPersonItems(onlyTotalResults)) || 0;
+      let totalItems = (await searchAllItems(onlyTotalResults)) || 0;
 
-      console.log("Total movies: ", totalMovies);
+      console.log("Quantidade de filmes: ", totalMovies);
+      console.log("Quantidade de Items: ", totalItems);
 
       setTotalResults({
-        multi: totalMovies + totalTvs + totalPersons,
+        multi: totalItems,
         movie: totalMovies,
         tv: totalTvs,
         person: totalPersons,
@@ -85,6 +101,8 @@ function SearchMovies() {
       let { data } = await axios.get(
         `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&api_key=${apiKey}`
       );
+
+      console.log(data);
 
       if (onlyTotalResults) {
         return data.total_results;
@@ -156,6 +174,59 @@ function SearchMovies() {
         personsArray.push(person);
       });
       setPersons(personsArray);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function searchAllItems(onlyTotalResults = false) {
+    try {
+      const { data } = await axios.get(
+        `https://api.themoviedb.org/3/search/multi?query=${search}&language=pt-BR&api_key=${apiKey}`
+      );
+
+      console.log(data);
+
+      if (onlyTotalResults) {
+        return data.total_results;
+      }
+
+      console.log(data);
+
+      const { results } = data;
+
+      const moviesArray: Movie[] = [];
+      const tvsArray: Tv[] = [];
+      const personsArray: Person[] = [];
+
+      results.map((item: any) => {
+        const { media_type } = item;
+        if (media_type === "movie") {
+          item.poster_url = `https://image.tmdb.org/t/p/w92${item.poster_path}`;
+          moviesArray.push(item);
+        } else if (media_type === "tv") {
+          item.poster_url = `https://image.tmdb.org/t/p/w92${item.poster_path}`;
+          tvsArray.push(item);
+        } else if (media_type === "person") {
+          const movies_worked_on = item.known_for.map((data: any) => {
+            if (data.title) {
+              return data.title;
+            } else {
+              return data.original_name;
+            }
+          });
+          item.movies_worked_on = movies_worked_on.join(", ");
+          item.profile_url = `https://image.tmdb.org/t/p/w90_and_h90_face${item.profile_path}`;
+
+          personsArray.push(item);
+        }
+      });
+
+      setMovies(moviesArray);
+      setTvs(tvsArray);
+      setPersons(personsArray);
+
+      // setPersons(personsArray);
     } catch (error) {
       console.log(error);
     }
