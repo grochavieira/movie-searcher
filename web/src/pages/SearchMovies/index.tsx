@@ -17,6 +17,7 @@ import axios from "axios";
 import MovieItem, { Movie } from "../../components/MovieItem";
 import TvItem, { Tv } from "../../components/TvItem";
 import PersonItem, { Person } from "../../components/PersonItem";
+import Pagination from "../../components/Pagination";
 
 interface SearchItem {
   type: string;
@@ -47,7 +48,7 @@ function SearchMovies() {
     { type: "person", label: "Pessoas", isSelected: false, value: 0 },
   ]);
 
-  const [searchType, setSearchType] = useState("movie");
+  const [searchType, setSearchType] = useState("multi");
   const [totalResults, setTotalResults] = useState<any>({
     multi: 0,
     movie: 0,
@@ -55,7 +56,9 @@ function SearchMovies() {
     person: 0,
   });
 
+  const [currentTotalItems, setCurrentTotalItems] = useState(0);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [tvs, setTvs] = useState<Tv[]>([]);
   const [persons, setPersons] = useState<Person[]>([]);
@@ -80,9 +83,6 @@ function SearchMovies() {
       let totalPersons = (await searchPersonItems(onlyTotalResults)) || 0;
       let totalItems = (await searchAllItems(onlyTotalResults)) || 0;
 
-      console.log("Quantidade de filmes: ", totalMovies);
-      console.log("Quantidade de Items: ", totalItems);
-
       setTotalResults({
         multi: totalItems,
         movie: totalMovies,
@@ -93,13 +93,14 @@ function SearchMovies() {
     setMovies([]);
     setTvs([]);
     setPersons([]);
+    setCurrentTotalItems(0);
     searchItem();
-  }, [search, searchType]);
+  }, [search, searchType, currentPage]);
 
   async function searchMovieItems(onlyTotalResults = false) {
     try {
       let { data } = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&api_key=${apiKey}`
+        `https://api.themoviedb.org/3/search/movie?query=${search}&language=pt-BR&page=${currentPage}&api_key=${apiKey}`
       );
 
       console.log(data);
@@ -107,6 +108,8 @@ function SearchMovies() {
       if (onlyTotalResults) {
         return data.total_results;
       }
+
+      setCurrentTotalItems(data.total_results);
 
       const { results } = data;
 
@@ -125,12 +128,14 @@ function SearchMovies() {
   async function searchTvItems(onlyTotalResults = false) {
     try {
       const { data } = await axios.get(
-        `https://api.themoviedb.org/3/search/tv?query=${search}&language=pt-BR&api_key=${apiKey}`
+        `https://api.themoviedb.org/3/search/tv?query=${search}&language=pt-BRpage=${currentPage}&&api_key=${apiKey}`
       );
 
       if (onlyTotalResults) {
         return data.total_results;
       }
+
+      setCurrentTotalItems(data.total_results);
 
       const { results } = data;
 
@@ -149,12 +154,14 @@ function SearchMovies() {
   async function searchPersonItems(onlyTotalResults = false) {
     try {
       const { data } = await axios.get(
-        `https://api.themoviedb.org/3/search/person?query=${search}&language=pt-BR&api_key=${apiKey}`
+        `https://api.themoviedb.org/3/search/person?query=${search}&language=pt-BR&page=${currentPage}&api_key=${apiKey}`
       );
 
       if (onlyTotalResults) {
         return data.total_results;
       }
+
+      setCurrentTotalItems(data.total_results);
 
       const { results } = data;
 
@@ -182,7 +189,7 @@ function SearchMovies() {
   async function searchAllItems(onlyTotalResults = false) {
     try {
       const { data } = await axios.get(
-        `https://api.themoviedb.org/3/search/multi?query=${search}&language=pt-BR&api_key=${apiKey}`
+        `https://api.themoviedb.org/3/search/multi?query=${search}&language=pt-BR&page=${currentPage}&api_key=${apiKey}`
       );
 
       console.log(data);
@@ -190,6 +197,8 @@ function SearchMovies() {
       if (onlyTotalResults) {
         return data.total_results;
       }
+
+      setCurrentTotalItems(data.total_results);
 
       console.log(data);
 
@@ -244,6 +253,26 @@ function SearchMovies() {
 
     setSearchResults(newSearchResults);
     setSearchType(newSearchType);
+    setCurrentPage(1);
+  }
+
+  function goBack() {
+    if (currentPage > 1) {
+      const previousPage = currentPage - 1;
+      setCurrentPage(previousPage);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function goForward() {
+    // const selectedSearch = searchResults
+    //   .map((search) => (search.isSelected ? search.type : ""))
+    //   .join("");
+    if (currentPage < Math.ceil(currentTotalItems / 20)) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+    }
+    window.scrollTo(0, 0);
   }
 
   return (
@@ -297,6 +326,13 @@ function SearchMovies() {
           {persons.map((person: Person) => {
             return <PersonItem key={person.id} person={person} />;
           })}
+          <Pagination
+            currentPage={currentPage}
+            goBack={goBack}
+            goForward={goForward}
+            totalItems={currentTotalItems}
+            setCurrentPage={setCurrentPage}
+          />
         </MoviesList>
       </Main>
     </Container>
