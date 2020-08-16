@@ -10,6 +10,7 @@ export const Container = styled.div`
   border-radius: 12px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.15);
   height: 141px;
+  cursor: pointer;
 `;
 
 export const Poster = styled.section<PosterProps>`
@@ -19,7 +20,6 @@ export const Poster = styled.section<PosterProps>`
   width: 92px;
   background-color: #aaa;
   content: ${(props) => `url(${props.poster_url})`};
-  background-repeat: no-repeat;
 `;
 
 export const TextSection = styled.section`
@@ -34,7 +34,7 @@ export const Title = styled.h2`
   margin-bottom: -12px;
 `;
 
-export const Data = styled.p`
+export const Date = styled.p`
   font-size: 1rem;
   font-family: "Source Sans Pro", Arial, sans-serif;
   color: rgb(153, 153, 153);
