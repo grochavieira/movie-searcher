@@ -13,9 +13,9 @@ export const Container = styled.div`
 
 export const InputBlock = styled.div`
   width: 100%;
-  margin: 10px 0px 30px 0px;
+  margin: 0px 0px 30px 0px;
   border: 0;
-  border-top: solid 2px rgb(48, 64, 81);
+  border-top: solid 2px #eee;
   border-bottom: solid 2px #eee;
   min-height: 50px;
   display: flex;

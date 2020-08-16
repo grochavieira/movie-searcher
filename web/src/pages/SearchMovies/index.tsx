@@ -18,6 +18,7 @@ import MovieItem, { Movie } from "../../components/MovieItem";
 import TvItem, { Tv } from "../../components/TvItem";
 import PersonItem, { Person } from "../../components/PersonItem";
 import Pagination from "../../components/Pagination";
+import Header from "../../components/Header";
 
 interface SearchItem {
   type: string;
@@ -276,66 +277,69 @@ function SearchMovies() {
   }
 
   return (
-    <Container>
-      <InputBlock>
-        <IoMdSearch size={19} />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          placeholder="Buscar por um Filme, Série ou Pessoa"
-        />
-      </InputBlock>
-
-      <Main>
-        <SearchSection>
-          <SearchResult>
-            <Title>
-              <p>Resultado da Busca</p>
-            </Title>
-            {searchResults.map((searchItem) => {
-              return (
-                <SearchItem
-                  onClick={() => handleSearchType(searchItem)}
-                  isSelected={searchItem.isSelected}
-                  key={searchItem.type}
-                >
-                  <p>{searchItem.label}</p>{" "}
-                  <span>{totalResults[`${searchItem.type}`]}</span>
-                </SearchItem>
-              );
-            })}
-          </SearchResult>
-          <Information>
-            <p>
-              <span>
-                <BsInfoCircleFill size={15} color="#000" />
-              </span>
-              Dica: Você pode usar o filtro 'y:' <br /> para limitar seus
-              resultados por ano. <br /> Exemplo 'tropa de elite y:2007'
-            </p>
-          </Information>
-        </SearchSection>
-        <MoviesList>
-          {movies.map((movie: Movie) => {
-            return <MovieItem key={movie.id} movie={movie} />;
-          })}
-          {tvs.map((tv: Tv) => {
-            return <TvItem key={tv.id} tv={tv} />;
-          })}
-          {persons.map((person: Person) => {
-            return <PersonItem key={person.id} person={person} />;
-          })}
-          <Pagination
-            currentPage={currentPage}
-            goBack={goBack}
-            goForward={goForward}
-            totalItems={currentTotalItems}
-            setCurrentPage={setCurrentPage}
+    <>
+      <Container>
+        <Header />
+        <InputBlock>
+          <IoMdSearch size={19} />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Buscar por um Filme, Série ou Pessoa"
           />
-        </MoviesList>
-      </Main>
-    </Container>
+        </InputBlock>
+
+        <Main>
+          <SearchSection>
+            <SearchResult>
+              <Title>
+                <p>Resultado da Busca</p>
+              </Title>
+              {searchResults.map((searchItem) => {
+                return (
+                  <SearchItem
+                    onClick={() => handleSearchType(searchItem)}
+                    isSelected={searchItem.isSelected}
+                    key={searchItem.type}
+                  >
+                    <p>{searchItem.label}</p>{" "}
+                    <span>{totalResults[`${searchItem.type}`]}</span>
+                  </SearchItem>
+                );
+              })}
+            </SearchResult>
+            <Information>
+              <p>
+                <span>
+                  <BsInfoCircleFill size={15} color="#000" />
+                </span>
+                Dica: Você pode usar o filtro 'y:' <br /> para limitar seus
+                resultados por ano. <br /> Exemplo 'tropa de elite y:2007'
+              </p>
+            </Information>
+          </SearchSection>
+          <MoviesList>
+            {movies.map((movie: Movie) => {
+              return <MovieItem key={movie.id} movie={movie} />;
+            })}
+            {tvs.map((tv: Tv) => {
+              return <TvItem key={tv.id} tv={tv} />;
+            })}
+            {persons.map((person: Person) => {
+              return <PersonItem key={person.id} person={person} />;
+            })}
+            <Pagination
+              currentPage={currentPage}
+              goBack={goBack}
+              goForward={goForward}
+              totalItems={currentTotalItems}
+              setCurrentPage={setCurrentPage}
+            />
+          </MoviesList>
+        </Main>
+      </Container>
+    </>
   );
 }
 
