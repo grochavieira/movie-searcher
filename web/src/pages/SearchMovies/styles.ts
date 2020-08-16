@@ -42,7 +42,7 @@ export const InputBlock = styled.div`
 
 export const Main = styled.main`
   display: flex;
-  width: 90%;
+  width: 92%;
   align-items: flex-start;
 `;
 
