@@ -61,6 +61,12 @@ Página para pesquisa de filmes utilizando a API do themoviedb além de recriar 
 
 ## 🎨 Layout
 
+### Demonstração da página em funcionamento
+
+<p align="center">
+    <img src="assets/page_demonstration.gif" />
+</p>
+
 ---
 
 ## 🚀 Como executar o projeto
